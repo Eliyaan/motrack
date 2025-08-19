@@ -1,11 +1,11 @@
 module motrack
 
-pub struct Coo {
+pub struct Coord {
 pub mut:
 	x f32
 	y f32
 }
 
 pub fn track_ball(image []u8, width int, height int, nb_channels int) Coo {
-	return Coo{100.0, 100.0}
+	return Coord{100.0, 100.0}
 }

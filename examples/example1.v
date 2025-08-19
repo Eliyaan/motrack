@@ -5,7 +5,7 @@ import gg
 struct App {
 mut:
 	ctx   &gg.Context = unsafe { nil }
-	coo   motrack.Coo
+	coord motrack.Coord
 	image gg.Image
 }
 
@@ -19,10 +19,10 @@ fn main() {
 	mut app := &App{}
 	app.ctx = gg.new_context(
 		create_window: true
-		frame_fn: on_frame
-                user_data:     app
+		frame_fn:      on_frame
+		user_data:     app
 	)
-	app.coo = motrack.track_ball(pixel_data, image.width, image.height, image.nr_channels)
+	app.coord = motrack.track_ball(pixel_data, image.width, image.height, image.nr_channels)
 	app.image = app.ctx.create_image('${@VMODROOT}/examples/img.jpg')!
 	app.ctx.run()
 }
@@ -30,6 +30,6 @@ fn main() {
 fn on_frame(mut app App) {
 	app.ctx.begin()
 	app.ctx.draw_image(0, 0, app.image.width, app.image.height, app.image)
-	app.ctx.draw_circle_filled(app.coo.x, app.coo.y, 10, gg.red)
+	app.ctx.draw_circle_filled(app.coord.x, app.coord.y, 10, gg.red)
 	app.ctx.end()
 }

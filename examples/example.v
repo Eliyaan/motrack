@@ -111,7 +111,7 @@ pub fn app_iterate(appstate voidptr) sdl.AppResult {
 	frame := sdl.acquire_camera_frame(app.camera, &timestamp_ns)
 
 	//	println(frame.format)
-	// coo := motrack.track_ball()
+	// coord := motrack.track_ball()
 
 	if frame != sdl.null {
 		// Some platforms (like Emscripten) don't know _what_ the camera offers
