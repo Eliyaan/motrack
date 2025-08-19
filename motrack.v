@@ -1,5 +1,7 @@
 module motrack
-//import stbi
+
+import stbi
+import arrays
 
 pub struct Coord {
 pub mut:
@@ -14,7 +16,7 @@ mut:
 	blue  [][]int
 }
 
-pub fn generer_masque(rayon int) [][]f32 {
+pub fn generer_masque(rayon int) ([][]f32, int) {
 	// Pour créer le masque, on va calculer la position de chaque élement du tableau et on va voir s'il est dans le cercle pour savoir si on met un 1 ou non
 	taille_masque := rayon * 2 + 1
 	mut masque := [][]int{len: taille_masque, init: []int{len: taille_masque, init: 1}}
@@ -41,24 +43,25 @@ pub fn generer_masque(rayon int) [][]f32 {
 	// 	}
 	// }
 	// return masque_normalised
-	return masque.map(it.map(f32(it)))
+	return masque.map(it.map(f32(it))), compteur
 }
 
-fn appliquer_masque(mut image_grise [][]int, masque_normalised [][]f32, rayon int, width int, height int)[][]f64{
-	mut image_convolution := [][]f64{len: width-2*rayon, init: []f64{len: height-2*rayon, init : 0}}
+fn appliquer_masque(mut image_grise [][]int, masque_normalised [][]f32, rayon int, width int, height int) [][]f64 {
+	mut image_convolution := [][]f64{len: width - 2 * rayon, init: []f64{len: height - 2 * rayon, init: 0}}
 	taille_masque := rayon * 2 + 1
 	mut somme_pixel := 0.0
-		for w in rayon..width-rayon{
-			for h in rayon..height-rayon{
-				for i in 0..taille_masque{
-					for j in 0..taille_masque{
-						somme_pixel = somme_pixel + image_grise[w-rayon+i][h-rayon+j]*masque_normalised[i][j]
-					}
+	for w in rayon .. width - rayon {
+		for h in rayon .. height - rayon {
+			for i in 0 .. taille_masque {
+				for j in 0 .. taille_masque {
+					somme_pixel = somme_pixel + image_grise[w - rayon + i][h - rayon +
+						j] * masque_normalised[i][j]
 				}
-				image_convolution[w-rayon][h-rayon] = somme_pixel
-				somme_pixel = 0
-			} 
+			}
+			image_convolution[w - rayon][h - rayon] = somme_pixel
+			somme_pixel = 0
 		}
+	}
 	return image_convolution
 }
 
@@ -92,12 +95,23 @@ pub fn track_ball(image []u8, width int, height int, nb_channels int, rayon int)
 		}
 
 		// On va appliquer un masque sur l'image en niveau de gris
-		//TODO : prendre en compte les bords + rajouter les conditions si rayon est plus grand que witdh
-		masque_normalised := generer_masque(rayon)
+		// TODO : prendre en compte les bords + rajouter les conditions si rayon est plus grand que width
+		masque_normalised, nb_de_moins_de_un := generer_masque(rayon)
 		mut image_convolue := [][]f64{len: width, init: []f64{len: height}}
-		image_convolue = appliquer_masque(mut image_grise, masque_normalised, rayon, width, height)
+		image_convolue = appliquer_masque(mut image_grise, masque_normalised, rayon, width,
+			height)
+
+		// Normaliser l'image
+		min := f64(255 * nb_de_moins_de_un) * (-1.0)
+		max := f64(255 * ((rayon * 2 + 1) * (rayon * 2 + 1) - nb_de_moins_de_un)) //(rayon * 2 + 1) = taille du masque ; mzx cest le nb de un * 255 et le min c'est le nb de -1 *-1 * 255
+		for mut ligne in image_convolue { // le mut devant le pixel permet de lui réassigner une valeur
+			for mut pixel in ligne {
+				pixel = (*pixel - min) / (max - min) * 255
+			}
+		}
+		stbi.stbi_write_jpg('image_convolue.jpg', width, height, 1, arrays.flatten(image_convolue).map(u8(it)).data,
+			1) or { panic(err) }
 		println(image_convolue[0])
-		//stbi.stbi_write_jpg	
 	}
 	return Coord{100.0, 100.0}
 }
