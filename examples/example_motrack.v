@@ -12,5 +12,5 @@ fn main() {
 	for i in 0 .. image.width * image.height * image.nr_channels {
 		pixel_data[i] = unsafe { image.data[i] }
 	}
-	motrack.track_ball(pixel_data, image.width, image.height, image.nr_channels, 50)
+	motrack.track_ball(pixel_data, image.width, image.height, image.nr_channels, 70)
 }
