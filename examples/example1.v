@@ -10,7 +10,7 @@ mut:
 }
 
 fn main() {
-	image := stbi.load('img.jpg')!
+	image := stbi.load('${@VMODROOT}/examples/img.jpg')!
 	mut pixel_data := []u8{len: image.width * image.height}
 	for i in 0 .. image.width * image.height {
 		pixel_data[i] = unsafe { image.data[i] }
@@ -23,7 +23,7 @@ fn main() {
                 user_data:     app
 	)
 	app.coo = motrack.track_ball(pixel_data, image.width, image.height, image.nr_channels)
-	app.image = app.ctx.create_image('img.jpg')!
+	app.image = app.ctx.create_image('${@VMODROOT}/examples/img.jpg')!
 	app.ctx.run()
 }
 
