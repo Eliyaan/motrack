@@ -8,9 +8,9 @@ fn main() {
 	// 	println(l)
 	// }
 	image := stbi.load('${@VMODROOT}/examples/img.jpg')!
-	mut pixel_data := []u8{len: image.width * image.height}
-	for i in 0 .. image.width * image.height {
+	mut pixel_data := []u8{len: image.width * image.height * image.nr_channels}
+	for i in 0 .. image.width * image.height * image.nr_channels {
 		pixel_data[i] = unsafe { image.data[i] }
 	}
-	motrack.track_ball(pixel_data, image.width, image.height, image.nr_channels, 7)
+	motrack.track_ball(pixel_data, image.width, image.height, image.nr_channels, 50)
 }
