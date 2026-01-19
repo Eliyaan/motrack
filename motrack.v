@@ -6,6 +6,6 @@ pub mut:
 	y f32
 }
 
-pub fn track_ball(image []u8, width int, height int, nb_channels int) Coo {
+pub fn track_ball(image []u8, width int, height int, nb_channels int) Coord {
 	return Coord{100.0, 100.0}
 }
